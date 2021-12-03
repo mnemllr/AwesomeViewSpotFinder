@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: AwesomeViewSpotFinder
+Main-Class: MainKt
+Implementation-Versio: 1.0-SNAPSHOT
+
