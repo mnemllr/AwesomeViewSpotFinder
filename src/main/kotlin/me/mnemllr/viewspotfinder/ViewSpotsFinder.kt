@@ -4,39 +4,47 @@ import me.mnemllr.viewspotfinder.json.Element
 import me.mnemllr.viewspotfinder.json.Mesh
 import me.mnemllr.viewspotfinder.json.Value
 
-class ViewSpotsFinder {
+class ViewSpotsFinder(mesh: Mesh) {
 
-    fun getHighestViewSpots(xHighestSpots: Int, mesh: Mesh): ArrayList<Value> {
+    private val descendingValues = mesh.values.apply { sortByDescending { it.value } }
+    private val idToValueMap = HashMap<Int, Value>(mesh.values.size).apply {
+        mesh.values.forEach { value -> this[value.element_id] = value }
+    }
+    private val idToElementMap = HashMap<Int, Element>(mesh.elements.size).apply {
+        mesh.elements.forEach { element -> this[element.id] = element }
+    }
+    private val allValuesOfNodeMap = HashMap<Int, ArrayList<Value>>(mesh.elements.size).apply {
+        for (element in mesh.elements) {
+            idToValueMap[element.id] ?: continue
+            element.nodes.forEach { nodeId ->
+                if (this[nodeId]?.add(idToValueMap[element.id]!!) == null) {
+                    this[nodeId] = arrayListOf(idToValueMap[element.id]!!)
+                }
+            }
+        }
+    }
+    
+    fun getHighestViewSpots(xHighestSpots: Int): ArrayList<Value> {
         val highestViewSpots = arrayListOf<Value>()
-        val descendValues = mesh.values.apply { sortByDescending { it.value } }
-        val valueMap = HashMap<Int, Value>().apply {
-            mesh.values.forEach { value -> this[value.element_id] = value }
-        }
-        val nodeMap = HashMap<Int, ArrayList<Value>>(mesh.elements.size).apply {
-            for (element in mesh.elements) {
-                element.nodes.forEach { node->
-                    if (this.containsKey(node)) {
-                        this[node]?.add(valueMap[element.id]!!)
-                        return@forEach
-                    }
-                    this[node] = arrayListOf(valueMap[element.id]!!)
-                }
-            }
-        }
-        val elementMap = HashMap<Int, Element>(mesh.elements.size).apply {
-            mesh.elements.forEach { element -> this[element.id] = element }
-        }
-        outer@ for (value in descendValues) {
+        outer@ for (value in descendingValues) {
             if (highestViewSpots.size == xHighestSpots) break@outer
-            val elemNodes = elementMap[value.element_id]?.nodes ?: continue@outer // element id not in map
-            for(node in elemNodes) {
-                val connectedHeightsOfNode = nodeMap[node] ?: continue@outer // node id not in map
-                for (heightOfNode in connectedHeightsOfNode) {
-                    if (heightOfNode.value > value.value) continue@outer // neighbour is higher, skip to next
-                }
-            }
+            if(hasHigherNeighbour(value)) continue@outer
             highestViewSpots.add(value)
         }
         return highestViewSpots
+    }
+
+    private fun hasHigherNeighbour(currentValue: Value): Boolean {
+        val elementOfValue = idToElementMap[currentValue.element_id] ?: return true
+        val nodesOfElement = elementOfValue.nodes
+        for (node in nodesOfElement) {
+            val allValuesOfNode = allValuesOfNodeMap[node] ?: return true
+            for (valueOfNode in allValuesOfNode) {
+                if (valueOfNode.value > currentValue.value) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }
