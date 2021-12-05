@@ -12,9 +12,6 @@ class JsonMeshParser {
             if (it.elements.isEmpty() || it.values.isEmpty() || it.nodes.isEmpty()) {
                 throw InvalidJsonMeshException("JSON values \"elements\", \"values\" and \"nodes\" must contain at least one entry")
             }
-/*            if (it.elements.size != it.values.size || it.elements.size != it.nodes.size) {
-                throw InvalidJsonMeshException("JSON values \"elements\", \"values\" and \"nodes\" must contain same amount of entries")
-            }*/
         }
         return jsonMesh
     }

@@ -26,6 +26,7 @@ class ViewSpotsFinder(mesh: Mesh) {
     
     fun getHighestViewSpots(xHighestSpots: Int): ArrayList<Value> {
         val highestViewSpots = arrayListOf<Value>()
+        if (xHighestSpots <=0) return highestViewSpots
         outer@ for (value in descendingValues) {
             if (highestViewSpots.size == xHighestSpots) break@outer
             if(hasHigherNeighbour(value)) continue@outer
