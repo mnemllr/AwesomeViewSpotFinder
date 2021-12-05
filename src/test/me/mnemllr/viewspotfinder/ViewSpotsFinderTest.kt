@@ -108,4 +108,29 @@ class ViewSpotsFinderTest {
         viewSpots = viewSpotsFinder.getHighestViewSpots(1)
         Assert.assertEquals("Mesh contains only 2 local maxima", 1, viewSpots.size)
     }
+
+    @Test
+    fun `getHighestViewSpots should return correct view spots with 1 dimensional mesh`() {
+        val node1d0 = Node(0, 0f, 0f)
+        val node1d1 = Node(1, 1f, 0f)
+        val node1d2 = Node(2, 2f, 0f)
+        val node1d3 = Node(3, 3f, 0f)
+        val node1d4 = Node(4, 4f, 0f)
+        val element1d0 = Element(0, arrayOf(0, 1))
+        val element1d1 = Element(1, arrayOf(1, 2))
+        val element1d2 = Element(2, arrayOf(2, 3))
+        val element1d3 = Element(3, arrayOf(3, 4))
+        val value1d0 = Value(0, 1.0)
+        val value1d1 = Value(1, 2.0)
+        val value1d2 = Value(2, 3.0)
+        val value1d3 = Value(3, 1.0)
+
+        val testMesh = Mesh(arrayOf(element1d0, element1d1, element1d2, element1d3),
+            arrayOf(node1d0, node1d1, node1d2, node1d3, node1d4),
+            arrayOf(value1d0, value1d1, value1d2, value1d3))
+        val viewSpotsFinder = ViewSpotsFinder(testMesh)
+        var viewSpots = viewSpotsFinder.getHighestViewSpots(4)
+        Assert.assertEquals(1, viewSpots.size)
+    }
+
 }
