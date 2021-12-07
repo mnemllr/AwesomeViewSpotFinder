@@ -4,9 +4,7 @@ import me.mnemllr.viewspotfinder.json.Element
 import me.mnemllr.viewspotfinder.json.Mesh
 import me.mnemllr.viewspotfinder.json.Node
 import me.mnemllr.viewspotfinder.json.Value
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 
 class ViewSpotsFinderTest {
